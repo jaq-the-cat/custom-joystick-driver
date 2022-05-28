@@ -1,10 +1,10 @@
 SRC     := $(wildcard src/*.c)
-#PKGS    := 
+PKGS    := libevdev
 CC      := clang
 CFLAGS  := -Iheaders
-CFLAGS  += -Wall -O2 -std=gnu17 #$(shell pkg-config --cflags $(PKGS))
+CFLAGS  += -Wall -O2 -std=gnu17 $(shell pkg-config --cflags $(PKGS))
 LDFLAGS := -lxdo
-#LDFLAGS += $(shell pkg-config --libs $(PKGS))
+LDFLAGS += $(shell pkg-config --libs $(PKGS))
 
 .PHONY: dev clean compile cnr
 
