@@ -103,6 +103,17 @@ void receive_commands(c_event ev) {
   }
 }
 
+void amogus(struct libevdev_uinput *udev) {
+  int s[6] = {KEY_A, KEY_M, KEY_O, KEY_G, KEY_U, KEY_S};
+  for (int i=0; i<6; i++) {
+    libevdev_uinput_write_event(udev, EV_KEY, s[i], 1);
+    libevdev_uinput_write_event(udev, EV_SYN, SYN_REPORT, 0);
+
+    libevdev_uinput_write_event(udev, EV_KEY, s[i], 0);
+    libevdev_uinput_write_event(udev, EV_SYN, SYN_REPORT, 0);
+  }
+}
+
 int main(int argc, char* argv[]) {
   int err;
   struct libevdev *dev = NULL;
@@ -137,25 +148,7 @@ int main(int argc, char* argv[]) {
   if (err != 0)
     return err;
 
-  usleep(100000);
-
-  usleep(3*1000*1000); // sleep for 3s
-  
-  int amogus[6] = {KEY_A, KEY_M, KEY_O, KEY_G, KEY_U, KEY_S};
-  for (int i=0; i<6; i++) {
-    // start event
-    libevdev_uinput_write_event(udev, EV_KEY, amogus[i], 1);
-    // finish
-    libevdev_uinput_write_event(udev, EV_SYN, SYN_REPORT, 0);
-
-    // start event
-    libevdev_uinput_write_event(udev, EV_KEY, amogus[i], 0);
-    // finish
-    libevdev_uinput_write_event(udev, EV_SYN, SYN_REPORT, 0);
-  }
-
-
-  usleep(10000);
+  usleep(100*1000); // 100ms
 
   libevdev_uinput_destroy(udev);
 
