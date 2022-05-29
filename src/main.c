@@ -15,12 +15,12 @@ typedef enum {
   K_FLAPS_DOWN     = BTN_BACK,
   K_FLAPS_UP       = BTN_FORWARD,
   K_FIRE           = BTN_TRIGGER,
+  K_BOMB_BAY_OPEN  = KEY_B,
+  K_BOMB_BAY_CLOSE = KEY_C,
   // EV_MSC
   K_BOMB           = BTN_X,
   K_BOMBS          = BTN_Y,
   K_ROCKETS        = BTN_Z,
-  K_BOMB_BAY_OPEN  = KEY_B,
-  K_BOMB_BAY_CLOSE = KEY_C,
 } buttons;
 
 #define KPRESS(key) //xdo_send_keysequence_window(x, CURRENTWINDOW, key, 1)
@@ -127,17 +127,18 @@ int main(int argc, char* argv[]) {
   // make it a gamepad
   libevdev_enable_event_code(dev, EV_MSC, BTN_GAMEPAD, NULL);
 
-  libevdev_enable_event_code(dev, EV_KEY, KEY_A, NULL);
   libevdev_enable_event_code(dev, EV_KEY, K_FLAPS_DOWN, NULL);
   libevdev_enable_event_code(dev, EV_KEY, K_FLAPS_UP, NULL);
   libevdev_enable_event_code(dev, EV_KEY, K_FIRE, NULL);
+  libevdev_enable_event_code(dev, EV_KEY, K_BOMB_BAY_OPEN, NULL);
+  libevdev_enable_event_code(dev, EV_KEY, K_BOMB_BAY_CLOSE, NULL);
 
   libevdev_enable_event_code(dev, EV_MSC, K_BOMB, NULL);
   libevdev_enable_event_code(dev, EV_MSC, K_BOMBS, NULL);
   libevdev_enable_event_code(dev, EV_MSC, K_ROCKETS, NULL);
-  libevdev_enable_event_code(dev, EV_MSC, K_BOMB_BAY_OPEN, NULL);
-  libevdev_enable_event_code(dev, EV_MSC, K_BOMB_BAY_CLOSE, NULL);
 
+  // amogus
+  libevdev_enable_event_code(dev, EV_KEY, KEY_A, NULL);
   libevdev_enable_event_code(dev, EV_KEY, KEY_M, NULL);
   libevdev_enable_event_code(dev, EV_KEY, KEY_O, NULL);
   libevdev_enable_event_code(dev, EV_KEY, KEY_G, NULL);
@@ -149,6 +150,8 @@ int main(int argc, char* argv[]) {
     return err;
 
   usleep(100*1000); // 100ms
+  
+  amogus(udev);
 
   libevdev_uinput_destroy(udev);
 
