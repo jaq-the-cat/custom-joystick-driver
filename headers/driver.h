@@ -18,17 +18,17 @@
 #define DOWN       ((c_data) {.is_down=true})
 
 // hardcoded raw controller output values
-#define X_MIN 0
-#define X_MAX 1023
+#define X_RAW_MIN 0
+#define X_RAW_MAX 1023
 
-#define Y_MIN 0
-#define Y_MAX 1023
+#define Y_RAW_MIN 0
+#define Y_RAW_MAX 1023
 
-#define THROTTLE_MIN 0
-#define THROTTLE_MAX 1023
+#define THROTTLE_RAW_MIN 0
+#define THROTTLE_RAW_MAX 1023
 
-#define RUDDER_MIN 0
-#define RUDDER_MAX 1023
+#define RUDDER_RAW_MIN 0
+#define RUDDER_RAW_MAX 1023
 
 typedef enum {
   // EV_KEY

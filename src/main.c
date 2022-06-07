@@ -57,20 +57,20 @@ void process_commands(c_event ev) {
     // axis
     case AXS_JOY:
       DO(EV_ABS, ABS_X, convert_to_range(ev.data.axis.x,
-            X_MIN, X_MAX,
+            X_RAW_MIN, X_RAW_MAX,
             min_x, max_x));
       DO(EV_ABS, ABS_Y, convert_to_range(ev.data.axis.y,
-            Y_MIN, Y_MAX,
+            Y_RAW_MIN, Y_RAW_MAX,
             min_y, max_y));
       break;
     case AXS_THROTTLE:
       DO(EV_ABS, ABS_THROTTLE, convert_to_range(ev.data.axis.y,
-            THROTTLE_MIN, THROTTLE_MAX,
+            THROTTLE_RAW_MIN, THROTTLE_RAW_MAX,
             min_throttle, max_throttle));
       break;
     case AXS_YAW:
       DO(EV_ABS, ABS_RUDDER, convert_to_range(ev.data.axis.x,
-            RUDDER_MIN, RUDDER_MAX,
+            RUDDER_RAW_MIN, RUDDER_RAW_MAX,
             min_rudder, max_rudder));
       break;
   }
