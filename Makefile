@@ -1,28 +1,24 @@
-obj-m += custom-joystick-driver.o
-
-KERNEL ?= $(shell uname -r)
-KERNELDIR := /usr/src/kernels/$(KERNEL)
 SRC     := $(wildcard src/*.c)
+PKGS    := libevdev
 CC      := clang
-CFLAGS  := -Iheaders -I$(KERNELDIR)/include
-CFLAGS  += -Wall -O2 -std=gnu11 -D__KERNEL__ -DMODULE
+CFLAGS  := -Iheaders
+CFLAGS  += -Wall -O2 -std=gnu17 $(shell pkg-config --cflags $(PKGS))
+LDFLAGS := $(shell pkg-config --libs $(PKGS))
+BINARY := a.out
 
 .PHONY: dev clean compile cnr
 
 dev:
-	echo $(CFLAGS) | tr " " "\n" > compile_flags.txt
-	echo $(LDFLAGS) | tr " " "\n" >> compile_flags.txt
-
-module:
-	$(MAKE) -C $(KERNELDIR) V=1 SUBDIRS=$(PWD) modules
+	bear -- make compile
+	rm $(BINARY)
 
 clean:
-	$(MAKE) -C $(KERNELDIR) SUBDIRS=$(PWD) clean
+	$(RM) *.o $(BINARY)
 
-#compile: $(SRC)
-	#$(CC) $(CFLAGS) $(LDFLAGS) $^ -o a.out
+compile: $(SRC)
+	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $(BINARY)
 
-#cnr: $(SRC)
-	#$(CC) $(CFLAGS) $(LDFLAGS) $^ -o a.out
-	#./a.out
-	#$(RM) *.o a.out
+cnr: $(SRC)
+	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $(BINARY)
+	./$(BINARY)
+	$(RM) *.o $(BINARY)

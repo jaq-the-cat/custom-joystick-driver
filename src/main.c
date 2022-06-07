@@ -103,17 +103,6 @@ void receive_commands(c_event ev) {
   }
 }
 
-void amogus(struct libevdev_uinput *udev) {
-  int s[6] = {KEY_A, KEY_M, KEY_O, KEY_G, KEY_U, KEY_S};
-  for (int i=0; i<6; i++) {
-    libevdev_uinput_write_event(udev, EV_KEY, s[i], 1);
-    libevdev_uinput_write_event(udev, EV_SYN, SYN_REPORT, 0);
-
-    libevdev_uinput_write_event(udev, EV_KEY, s[i], 0);
-    libevdev_uinput_write_event(udev, EV_SYN, SYN_REPORT, 0);
-  }
-}
-
 int main(int argc, char* argv[]) {
   int err;
   struct libevdev *dev = NULL;
@@ -137,21 +126,11 @@ int main(int argc, char* argv[]) {
   libevdev_enable_event_code(dev, EV_MSC, K_BOMBS, NULL);
   libevdev_enable_event_code(dev, EV_MSC, K_ROCKETS, NULL);
 
-  // amogus
-  libevdev_enable_event_code(dev, EV_KEY, KEY_A, NULL);
-  libevdev_enable_event_code(dev, EV_KEY, KEY_M, NULL);
-  libevdev_enable_event_code(dev, EV_KEY, KEY_O, NULL);
-  libevdev_enable_event_code(dev, EV_KEY, KEY_G, NULL);
-  libevdev_enable_event_code(dev, EV_KEY, KEY_U, NULL);
-  libevdev_enable_event_code(dev, EV_KEY, KEY_S, NULL);
-
   err = libevdev_uinput_create_from_device(dev, LIBEVDEV_UINPUT_OPEN_MANAGED, &udev);
   if (err != 0)
     return err;
 
   usleep(100*1000); // 100ms
-  
-  amogus(udev);
 
   libevdev_uinput_destroy(udev);
 

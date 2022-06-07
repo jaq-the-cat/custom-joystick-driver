@@ -1,8 +1,0 @@
--Iheaders
--I/usr/src/kernels/5.17.11-300.fc36.x86_64/include
--Wall
--O2
--std=gnu11
--D__KERNEL__
--DMODULE
-
