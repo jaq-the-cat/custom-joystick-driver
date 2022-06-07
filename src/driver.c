@@ -30,20 +30,20 @@ int setup_evdev() {
   // absolute movement
   // event codes
   libevdev_enable_event_code(dev, EV_ABS, ABS_X, NULL);
-  min_x = libevdev_get_abs_minimum(dev, ABS_X);
+  x_dev_min = libevdev_get_abs_minimum(dev, ABS_X);
   max_x = libevdev_get_abs_maximum(dev, ABS_X);
 
   libevdev_enable_event_code(dev, EV_ABS, ABS_Y, NULL);
-  min_y = libevdev_get_abs_minimum(dev, ABS_Y);
+  y_dev_min = libevdev_get_abs_minimum(dev, ABS_Y);
   max_y = libevdev_get_abs_maximum(dev, ABS_Y);
 
   libevdev_enable_event_code(dev, EV_ABS, ABS_THROTTLE, NULL);
-  min_throttle = libevdev_get_abs_minimum(dev, ABS_THROTTLE);
-  max_throttle = libevdev_get_abs_maximum(dev, ABS_THROTTLE);
+  throttle_dev_min = libevdev_get_abs_minimum(dev, ABS_THROTTLE);
+  throttle_dev_max = libevdev_get_abs_maximum(dev, ABS_THROTTLE);
 
   libevdev_enable_event_code(dev, EV_ABS, ABS_RUDDER, NULL);
-  min_rudder = libevdev_get_abs_minimum(dev, ABS_RUDDER);
-  max_rudder = libevdev_get_abs_maximum(dev, ABS_RUDDER);
+  rudder_dev_min = libevdev_get_abs_minimum(dev, ABS_RUDDER);
+  rudder_dev_max = libevdev_get_abs_maximum(dev, ABS_RUDDER);
 
   return libevdev_uinput_create_from_device(dev, LIBEVDEV_UINPUT_OPEN_MANAGED, &udev);
 }

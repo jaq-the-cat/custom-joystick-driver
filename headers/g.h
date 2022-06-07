@@ -11,7 +11,7 @@ extern int controller;
 extern struct libevdev *dev;
 extern struct libevdev_uinput *udev;
 
-extern int min_x, max_x;
-extern int min_y, max_y;
-extern int min_throttle, max_throttle;
-extern int min_rudder, max_rudder;
+extern int x_dev_min, max_x;
+extern int y_dev_min, max_y;
+extern int throttle_dev_min, throttle_dev_max;
+extern int rudder_dev_min, rudder_dev_max;

@@ -7,7 +7,7 @@ struct libevdev *dev;
 struct libevdev_uinput *udev;
 
 // abs value params
-int min_x, max_x;
-int min_y, max_y;
-int min_throttle, max_throttle;
-int min_rudder, max_rudder;
+int x_dev_min, max_x;
+int y_dev_min, max_y;
+int throttle_dev_min, throttle_dev_max;
+int rudder_dev_min, rudder_dev_max;

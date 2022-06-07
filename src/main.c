@@ -58,20 +58,20 @@ void process_commands(c_event ev) {
     case AXS_JOY:
       DO(EV_ABS, ABS_X, convert_to_range(ev.data.axis.x,
             X_RAW_MIN, X_RAW_MAX,
-            min_x, max_x));
+            x_dev_min, max_x));
       DO(EV_ABS, ABS_Y, convert_to_range(ev.data.axis.y,
             Y_RAW_MIN, Y_RAW_MAX,
-            min_y, max_y));
+            y_dev_min, max_y));
       break;
     case AXS_THROTTLE:
       DO(EV_ABS, ABS_THROTTLE, convert_to_range(ev.data.axis.y,
             THROTTLE_RAW_MIN, THROTTLE_RAW_MAX,
-            min_throttle, max_throttle));
+            throttle_dev_min, throttle_dev_max));
       break;
     case AXS_YAW:
       DO(EV_ABS, ABS_RUDDER, convert_to_range(ev.data.axis.x,
             RUDDER_RAW_MIN, RUDDER_RAW_MAX,
-            min_rudder, max_rudder));
+            rudder_dev_min, rudder_dev_max));
       break;
   }
 
