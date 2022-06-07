@@ -1,136 +1,100 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <libevdev/libevdev.h>
-#include <linux/input-event-codes.h>
-#include <libevdev/libevdev-uinput.h>
+#include "driver.h"
+#include "g.h"
 
-#include <string.h>
+#define DO(type, code, value)\
+  libevdev_uinput_write_event(udev, type, code, value);\
+  libevdev_uinput_write_event(udev, EV_SYN, SYN_REPORT, 0)
 
-#define TRUE 0x01
-#define FALSE 0x00
+c_event receive_commands() {
+  byte response[sizeof(c_event)];
+  read(controller, response, sizeof(c_event)); // messages sent by controller are sizeof(c_event) or 12 bytes
+  
+  return *((c_event*) response);
+}
 
-typedef enum {
-  // EV_KEY
-  K_FLAPS_DOWN     = BTN_BACK,
-  K_FLAPS_UP       = BTN_FORWARD,
-  K_FIRE           = BTN_TRIGGER,
-  K_BOMB_BAY_OPEN  = KEY_B,
-  K_BOMB_BAY_CLOSE = KEY_C,
-  // EV_MSC
-  K_BOMB           = BTN_X,
-  K_BOMBS          = BTN_Y,
-  K_ROCKETS        = BTN_Z,
-} buttons;
-
-#define KPRESS(key) //xdo_send_keysequence_window(x, CURRENTWINDOW, key, 1)
-#define MPRESS(button)\
-  usleep(100);
-  //xdo_mouse_down(x, CURRENTWINDOW, button);
-  //xdo_mouse_up(x, CURRENTWINDOW, button)
-
-typedef unsigned char byte;
-
-typedef enum {
-  // buttons
-  B_FLAPS_DOWN,
-  B_FLAPS_UP,
-  B_FIRE,
-  B_BOMB,
-  B_BOMBS,
-  B_BOMB_BAY,
-  B_ROCKETS,
-  // axis
-  A_JOY,
-  A_THROTTLE,
-  A_YAW,
-  A_MIX,
-  A_PITCH,
-} c_command_types;
-
-typedef union {
-  struct {
-    double x, y;
-  } axis;
-  byte is_down; // 1 if down, 0 if release
-} c_data;
-
-typedef struct {
-  c_command_types type;
-  c_data data;
-} c_event;
-
-byte s_firing = FALSE; // not firing
-byte s_bombs = FALSE; // not dropping bomb series
-
-void receive_commands(c_event ev) {
+void process_commands(c_event ev) {
   switch (ev.type) {
-    case B_FLAPS_DOWN:
-      KPRESS(K_FLAPS_DOWN);
+    case BTN_FLAPS_DOWN:
+      DO(EV_KEY, KEY_FLAPS_DOWN, true); // press
+      DO(EV_KEY, KEY_FLAPS_DOWN, false); // release
       break;
-    case B_FLAPS_UP:
-      KPRESS(K_FLAPS_UP);
+    case BTN_FLAPS_UP:
+      DO(EV_KEY, KEY_FLAPS_UP, true);
+      DO(EV_KEY, KEY_FLAPS_UP, false);
       break;
-    case B_FIRE:
+    case BTN_FIRE:
       s_firing = ev.data.is_down;
+      if (!s_firing) { // just released
+        DO(EV_KEY, KEY_FIRE, false);
+      }
       break;
-    case B_BOMB:
-      KPRESS(K_BOMB);
+    case BTN_BOMB:
+      DO(EV_MSC, MSC_BOMB, true);
+      DO(EV_MSC, MSC_BOMB, false);
       break;
-    case B_BOMBS:
+    case BTN_BOMBS:
       s_bombs = ev.data.is_down;
+      if (!s_bombs) { // just released
+        DO(EV_MSC, MSC_BOMBS, false);
+      }
       break;
-    case B_BOMB_BAY:
-      if (ev.data.is_down) // toggle off
-        KPRESS(K_BOMB_BAY_CLOSE);
-      else
-        KPRESS(K_BOMB_BAY_OPEN); // toggle on
+    case BTN_BOMB_BAY:
+      if (ev.data.is_down) {// toggle off
+        DO(EV_KEY, KEY_BOMB_BAY_CLOSE, true);
+        DO(EV_KEY, KEY_BOMB_BAY_CLOSE, false);
+      } else {
+        DO(EV_KEY, KEY_BOMB_BAY_OPEN, true);
+        DO(EV_KEY, KEY_BOMB_BAY_OPEN, false);
+      }
       break;
-    case B_ROCKETS:
-      KPRESS(K_ROCKETS);
+    case BTN_ROCKET:
+        DO(EV_MSC, MSC_ROCKET, true);
+        DO(EV_MSC, MSC_ROCKET, false);
       break;
+
     // axis
-    case A_JOY:
+    case AXS_JOY:
+      DO(EV_ABS, ABS_X, convert_to_range(ev.data.axis.x,
+            X_MIN, X_MAX,
+            min_x, max_x));
+      DO(EV_ABS, ABS_Y, convert_to_range(ev.data.axis.y,
+            Y_MIN, Y_MAX,
+            min_y, max_y));
       break;
-    case A_THROTTLE:
+    case AXS_THROTTLE:
+      DO(EV_ABS, ABS_THROTTLE, convert_to_range(ev.data.axis.y,
+            THROTTLE_MIN, THROTTLE_MAX,
+            min_throttle, max_throttle));
       break;
-    case A_YAW:
+    case AXS_YAW:
+      DO(EV_ABS, ABS_RUDDER, convert_to_range(ev.data.axis.x,
+            RUDDER_MIN, RUDDER_MAX,
+            min_rudder, max_rudder));
       break;
-    case A_MIX:
-      break;
-    case A_PITCH:
-      break;
+  }
+
+  if (s_firing) {
+    DO(EV_KEY, KEY_FIRE, true);
+  }
+
+  if (s_bombs) {
+    DO(EV_MSC, MSC_BOMBS, true);
   }
 }
 
 int main(int argc, char* argv[]) {
-  int err;
-  struct libevdev *dev = NULL;
-  struct libevdev_uinput *udev = NULL;
-
-  dev = libevdev_new();
-  libevdev_set_name(dev, "Arduino Controller");
-  libevdev_enable_event_type(dev, EV_KEY);
-  libevdev_enable_event_type(dev, EV_MSC);
-
-  // make it a gamepad
-  libevdev_enable_event_code(dev, EV_MSC, BTN_GAMEPAD, NULL);
-
-  libevdev_enable_event_code(dev, EV_KEY, K_FLAPS_DOWN, NULL);
-  libevdev_enable_event_code(dev, EV_KEY, K_FLAPS_UP, NULL);
-  libevdev_enable_event_code(dev, EV_KEY, K_FIRE, NULL);
-  libevdev_enable_event_code(dev, EV_KEY, K_BOMB_BAY_OPEN, NULL);
-  libevdev_enable_event_code(dev, EV_KEY, K_BOMB_BAY_CLOSE, NULL);
-
-  libevdev_enable_event_code(dev, EV_MSC, K_BOMB, NULL);
-  libevdev_enable_event_code(dev, EV_MSC, K_BOMBS, NULL);
-  libevdev_enable_event_code(dev, EV_MSC, K_ROCKETS, NULL);
-
-  err = libevdev_uinput_create_from_device(dev, LIBEVDEV_UINPUT_OPEN_MANAGED, &udev);
+  usleep(100*1000); // 100ms
+  
+  int err = setup_evdev() | setup_read_commands();
   if (err != 0)
     return err;
-
-  usleep(100*1000); // 100ms
+  
+  while (true) {
+    process_commands(receive_commands());
+    usleep(100);
+  }
 
   libevdev_uinput_destroy(udev);
 
