@@ -6,6 +6,10 @@
 
 #define USB "/dev/ttyUSB0"
 
+double convert_to_range(double n, double in_min, double in_max, double out_min, double out_max) {
+  return (n - in_min) * ((out_max - out_min) / (in_max - in_min)) + out_min;
+}
+
 int setup_evdev() {
   dev = libevdev_new();
   libevdev_set_name(dev, "Arduino Controller");
@@ -81,8 +85,4 @@ int setup_read_commands() {
   }
 
   return 0;
-}
-
-double convert_to_range(double n, double in_min, double in_max, double out_min, double out_max) {
-  return (n - in_min) * ((out_max - out_min) / (in_max - in_min)) + out_min;
 }

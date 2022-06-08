@@ -70,6 +70,6 @@ typedef struct {
   c_data data;
 } c_event;
 
+double convert_to_range(double n, double in_min, double in_max, double out_min, double out_max);
 int setup_evdev();
 int setup_read_commands();
-double convert_to_range(double n, double in_min, double in_max, double out_min, double out_max);
