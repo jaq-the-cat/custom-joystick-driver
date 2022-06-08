@@ -4,12 +4,17 @@
 #include "g.h"
 
 #define DO(type, code, value)\
-  libevdev_uinput_write_event(udev, type, code, value);\
-  libevdev_uinput_write_event(udev, EV_SYN, SYN_REPORT, 0)
+  libevdev_uinput_write_event(g.udev, type, code, value);\
+  libevdev_uinput_write_event(g.udev, EV_SYN, SYN_REPORT, 0)
+
+// is firing
+byte s_firing;
+// is dropping bomb series
+byte s_bombs;
 
 c_event receive_commands() {
   byte response[sizeof(c_event)];
-  read(controller, response, sizeof(c_event)); // messages sent by controller are sizeof(c_event) or 12 bytes
+  read(g.controller, response, sizeof(c_event)); // messages sent by controller are sizeof(c_event) or 12 bytes
   
   return *((c_event*) response);
 }
@@ -58,20 +63,20 @@ void process_commands(c_event ev) {
     case AXS_JOY:
       DO(EV_ABS, ABS_X, convert_to_range(ev.data.axis.x,
             X_RAW_MIN, X_RAW_MAX,
-            x_dev_min, max_x));
+            g.x_dev_min, g.max_x));
       DO(EV_ABS, ABS_Y, convert_to_range(ev.data.axis.y,
             Y_RAW_MIN, Y_RAW_MAX,
-            y_dev_min, max_y));
+            g.y_dev_min, g.max_y));
       break;
     case AXS_THROTTLE:
       DO(EV_ABS, ABS_THROTTLE, convert_to_range(ev.data.axis.y,
             THROTTLE_RAW_MIN, THROTTLE_RAW_MAX,
-            throttle_dev_min, throttle_dev_max));
+            g.throttle_dev_min, g.throttle_dev_max));
       break;
     case AXS_YAW:
       DO(EV_ABS, ABS_RUDDER, convert_to_range(ev.data.axis.x,
             RUDDER_RAW_MIN, RUDDER_RAW_MAX,
-            rudder_dev_min, rudder_dev_max));
+            g.rudder_dev_min, g.rudder_dev_max));
       break;
   }
 
@@ -96,7 +101,7 @@ int main(int argc, char* argv[]) {
     usleep(100);
   }
 
-  libevdev_uinput_destroy(udev);
+  libevdev_uinput_destroy(g.udev);
 
   return 0;
 }
