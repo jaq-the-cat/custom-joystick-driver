@@ -15,7 +15,7 @@ typedef struct {
   int x_dev_min, max_x;
   int y_dev_min, max_y;
   int throttle_dev_min, throttle_dev_max;
-  int rudder_dev_min, rudder_dev_max;
+  int yaw_dev_min, yaw_dev_max;
 } global;
 
 extern global g;

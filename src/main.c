@@ -8,6 +8,14 @@
   libevdev_uinput_write_event(g.udev, type, code, value);\
   libevdev_uinput_write_event(g.udev, EV_SYN, SYN_REPORT, 0)
 
+int16_t yaw_log_to_lin(int16_t raw_x) {
+  if (raw_x <= 580)
+    return 5*raw_x / 58;
+  else
+    // raw_x > 580
+    return 5*(raw_x-490) / 9;
+}
+
 c_event receive_commands() {
   c_event ev;
 
@@ -16,21 +24,16 @@ c_event receive_commands() {
   read(g.controller, response, s_size);
 
   memcpy(&ev, response, s_size);
-
-  printf("is_down: %d\n", ev.data.is_down);
-  printf("type:    %d\n\n", ev.type);
   return ev;
 }
 
 void process_commands(c_event ev) {
   switch (ev.type) {
     case BTN_FLAPS_DOWN:
-      /*printf("flaps down\n");*/
       DO(EV_KEY, KEY_FLAPS_DOWN, true); // press
       DO(EV_KEY, KEY_FLAPS_DOWN, false); // release
       break;
     case BTN_FLAPS_UP:
-      /*printf("flaps up\n");*/
       DO(EV_KEY, KEY_FLAPS_UP, true);
       DO(EV_KEY, KEY_FLAPS_UP, false);
       break;
@@ -70,7 +73,6 @@ void process_commands(c_event ev) {
 
     // axis
     case AXS_JOY:
-      /*printf("joystick: %d %d\n", ev.data.axis.x, ev.data.axis.y);*/
       DO(EV_ABS, ABS_X, convert_to_range(ev.data.axis.x,
             X_RAW_MIN, X_RAW_MAX,
             g.x_dev_min, g.max_x));
@@ -79,15 +81,15 @@ void process_commands(c_event ev) {
             g.y_dev_min, g.max_y));
       break;
     case AXS_THROTTLE:
-      /*printf("throttle: %d\n", ev.data.axis.y);*/
       DO(EV_ABS, ABS_THROTTLE, convert_to_range(ev.data.axis.y,
             THROTTLE_RAW_MIN, THROTTLE_RAW_MAX,
             g.throttle_dev_min, g.throttle_dev_max));
       break;
     case AXS_YAW:
-      DO(EV_ABS, ABS_RUDDER, convert_to_range(ev.data.axis.x,
-            RUDDER_RAW_MIN, RUDDER_RAW_MAX,
-            g.rudder_dev_min, g.rudder_dev_max));
+      printf("yaw: %d\n", yaw_log_to_lin(ev.data.axis.x));
+      DO(EV_ABS, ABS_RUDDER, convert_to_range(yaw_log_to_lin(ev.data.axis.x),
+            YAW_RAW_MIN, YAW_RAW_MAX,
+            g.yaw_dev_min, g.yaw_dev_max));
       break;
   }
 }

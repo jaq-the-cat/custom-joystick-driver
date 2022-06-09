@@ -27,8 +27,8 @@
 #define THROTTLE_RAW_MIN 0
 #define THROTTLE_RAW_MAX 1023
 
-#define RUDDER_RAW_MIN 0
-#define RUDDER_RAW_MAX 1023
+#define YAW_RAW_MIN 0
+#define YAW_RAW_MAX 100
 
 typedef enum {
   // EV_KEY

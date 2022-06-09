@@ -46,8 +46,8 @@ int setup_evdev() {
   g.throttle_dev_max = libevdev_get_abs_maximum(g.dev, ABS_THROTTLE);
 
   libevdev_enable_event_code(g.dev, EV_ABS, ABS_RUDDER, NULL);
-  g.rudder_dev_min = libevdev_get_abs_minimum(g.dev, ABS_RUDDER);
-  g.rudder_dev_max = libevdev_get_abs_maximum(g.dev, ABS_RUDDER);
+  g.yaw_dev_min = libevdev_get_abs_minimum(g.dev, ABS_RUDDER);
+  g.yaw_dev_max = libevdev_get_abs_maximum(g.dev, ABS_RUDDER);
 
   return libevdev_uinput_create_from_device(g.dev, LIBEVDEV_UINPUT_OPEN_MANAGED, &g.udev);
 }

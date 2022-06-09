@@ -110,12 +110,12 @@
       "-x",
       "c",
       "-o",
-      "/tmp/driver-1bfe5e.o",
+      "/tmp/driver-eb2885.o",
       "src/driver.c"
     ],
     "directory": "/home/jaqi/dev/custom-joystick/driver",
     "file": "/home/jaqi/dev/custom-joystick/driver/src/driver.c",
-    "output": "/tmp/driver-1bfe5e.o"
+    "output": "/tmp/driver-eb2885.o"
   },
   {
     "arguments": [
@@ -177,12 +177,12 @@
       "-x",
       "c",
       "-o",
-      "/tmp/g-2f5765.o",
+      "/tmp/g-fd7181.o",
       "src/g.c"
     ],
     "directory": "/home/jaqi/dev/custom-joystick/driver",
     "file": "/home/jaqi/dev/custom-joystick/driver/src/g.c",
-    "output": "/tmp/g-2f5765.o"
+    "output": "/tmp/g-fd7181.o"
   },
   {
     "arguments": [
@@ -244,11 +244,11 @@
       "-x",
       "c",
       "-o",
-      "/tmp/main-92dee8.o",
+      "/tmp/main-add07a.o",
       "src/main.c"
     ],
     "directory": "/home/jaqi/dev/custom-joystick/driver",
     "file": "/home/jaqi/dev/custom-joystick/driver/src/main.c",
-    "output": "/tmp/main-92dee8.o"
+    "output": "/tmp/main-add07a.o"
   }
 ]
