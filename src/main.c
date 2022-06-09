@@ -15,23 +15,28 @@ byte s_bombs;
 c_event receive_commands() {
   byte response[sizeof(c_event)];
   read(g.controller, response, sizeof(c_event)); // messages sent by controller are sizeof(c_event) or 12 bytes
-  
-  return *((c_event*) response);
+  c_event r = *((c_event*) response);
+  printf("c_event type: %d\n", r.type);
+  return r;
 }
 
 void process_commands(c_event ev) {
   switch (ev.type) {
     case BTN_FLAPS_DOWN:
+      printf("flaps down\n");
       DO(EV_KEY, KEY_FLAPS_DOWN, true); // press
       DO(EV_KEY, KEY_FLAPS_DOWN, false); // release
       break;
     case BTN_FLAPS_UP:
+      printf("flaps up\n");
       DO(EV_KEY, KEY_FLAPS_UP, true);
       DO(EV_KEY, KEY_FLAPS_UP, false);
       break;
     case BTN_FIRE:
+      printf("fire pressed\n");
       s_firing = ev.data.is_down;
       if (!s_firing) { // just released
+        printf("fire released\n");
         DO(EV_KEY, KEY_FIRE, false);
       }
       break;
@@ -61,6 +66,7 @@ void process_commands(c_event ev) {
 
     // axis
     case AXS_JOY:
+      printf("joystick: %d %d\n", ev.data.axis.x, ev.data.axis.y);
       DO(EV_ABS, ABS_X, convert_to_range(ev.data.axis.x,
             X_RAW_MIN, X_RAW_MAX,
             g.x_dev_min, g.max_x));
@@ -69,6 +75,7 @@ void process_commands(c_event ev) {
             g.y_dev_min, g.max_y));
       break;
     case AXS_THROTTLE:
+      printf("throttle: %d\n", ev.data.axis.y);
       DO(EV_ABS, ABS_THROTTLE, convert_to_range(ev.data.axis.y,
             THROTTLE_RAW_MIN, THROTTLE_RAW_MAX,
             g.throttle_dev_min, g.throttle_dev_max));
