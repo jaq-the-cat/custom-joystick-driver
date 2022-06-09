@@ -12,7 +12,7 @@
 #define false 0x00
 #define byte uint8_t
 
-#define EVENT(type, data) ((c_event) {type, data})
+#define EVENT(type, data) ((c_event) {data, type})
 #define AXIS(x, y) ((c_data) {.axis={x, y}})
 #define UP         ((c_data) {.is_down=false})
 #define DOWN       ((c_data) {.is_down=true})
@@ -60,14 +60,14 @@ typedef enum {
 
 typedef union {
   struct {
-    int x, y;
+    int16_t x, y;
   } axis;
   byte is_down; // 1 if down, 0 if release
 } c_data;
 
 typedef struct {
-  c_command_types type;
   c_data data;
+  byte type;
 } c_event;
 
 double convert_to_range(double n, double in_min, double in_max, double out_min, double out_max);

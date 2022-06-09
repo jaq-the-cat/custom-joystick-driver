@@ -102,6 +102,7 @@
       "-ferror-limit",
       "19",
       "-fgnuc-version=4.2.1",
+      "-fcolor-diagnostics",
       "-vectorize-loops",
       "-vectorize-slp",
       "-faddrsig",
@@ -109,12 +110,12 @@
       "-x",
       "c",
       "-o",
-      "/tmp/driver-f01349.o",
+      "/tmp/driver-1bfe5e.o",
       "src/driver.c"
     ],
     "directory": "/home/jaqi/dev/custom-joystick/driver",
     "file": "/home/jaqi/dev/custom-joystick/driver/src/driver.c",
-    "output": "/tmp/driver-f01349.o"
+    "output": "/tmp/driver-1bfe5e.o"
   },
   {
     "arguments": [
@@ -168,6 +169,7 @@
       "-ferror-limit",
       "19",
       "-fgnuc-version=4.2.1",
+      "-fcolor-diagnostics",
       "-vectorize-loops",
       "-vectorize-slp",
       "-faddrsig",
@@ -175,12 +177,12 @@
       "-x",
       "c",
       "-o",
-      "/tmp/g-8885c1.o",
+      "/tmp/g-2f5765.o",
       "src/g.c"
     ],
     "directory": "/home/jaqi/dev/custom-joystick/driver",
     "file": "/home/jaqi/dev/custom-joystick/driver/src/g.c",
-    "output": "/tmp/g-8885c1.o"
+    "output": "/tmp/g-2f5765.o"
   },
   {
     "arguments": [
@@ -234,6 +236,7 @@
       "-ferror-limit",
       "19",
       "-fgnuc-version=4.2.1",
+      "-fcolor-diagnostics",
       "-vectorize-loops",
       "-vectorize-slp",
       "-faddrsig",
@@ -241,11 +244,11 @@
       "-x",
       "c",
       "-o",
-      "/tmp/main-66be5c.o",
+      "/tmp/main-92dee8.o",
       "src/main.c"
     ],
     "directory": "/home/jaqi/dev/custom-joystick/driver",
     "file": "/home/jaqi/dev/custom-joystick/driver/src/main.c",
-    "output": "/tmp/main-66be5c.o"
+    "output": "/tmp/main-92dee8.o"
   }
 ]
