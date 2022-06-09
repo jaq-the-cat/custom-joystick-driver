@@ -8,6 +8,5 @@ int main() {
   uint16_t big;
 
   memcpy(&big, bytes, 2);
-  printf("big: %hu\n", big);
   return 0;
 }

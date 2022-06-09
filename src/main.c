@@ -4,16 +4,21 @@
 #include "driver.h"
 #include "g.h"
 
+#define DEADZONE 2
+
 #define DO(type, code, value)\
   libevdev_uinput_write_event(g.udev, type, code, value);\
   libevdev_uinput_write_event(g.udev, EV_SYN, SYN_REPORT, 0)
 
 int16_t yaw_log_to_lin(int16_t raw_x) {
+  int16_t result;
   if (raw_x <= 580)
-    return 5*raw_x / 58;
+    result = 5*raw_x / 58;
   else
-    // raw_x > 580
-    return 5*(raw_x-490) / 9;
+    result = 5*(raw_x-490) / 9;
+  if (50-DEADZONE <= result && result <= 50+DEADZONE)
+    return 50;
+  return result;
 }
 
 c_event receive_commands() {
@@ -58,12 +63,12 @@ void process_commands(c_event ev) {
       }
       break;
     case BTN_BOMB_BAY:
-      if (ev.data.is_down) {// toggle off
-        DO(EV_KEY, KEY_BOMB_BAY_CLOSE, true);
-        DO(EV_KEY, KEY_BOMB_BAY_CLOSE, false);
-      } else {
+      if (ev.data.is_down) { // toggle on
         DO(EV_KEY, KEY_BOMB_BAY_OPEN, true);
         DO(EV_KEY, KEY_BOMB_BAY_OPEN, false);
+      } else {
+        DO(EV_KEY, KEY_BOMB_BAY_CLOSE, true);
+        DO(EV_KEY, KEY_BOMB_BAY_CLOSE, false);
       }
       break;
     case BTN_ROCKET:
@@ -86,7 +91,6 @@ void process_commands(c_event ev) {
             g.throttle_dev_min, g.throttle_dev_max));
       break;
     case AXS_YAW:
-      printf("yaw: %d\n", yaw_log_to_lin(ev.data.axis.x));
       DO(EV_ABS, ABS_RUDDER, convert_to_range(yaw_log_to_lin(ev.data.axis.x),
             YAW_RAW_MIN, YAW_RAW_MAX,
             g.yaw_dev_min, g.yaw_dev_max));
