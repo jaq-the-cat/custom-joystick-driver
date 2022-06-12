@@ -33,6 +33,7 @@ c_event receive_commands() {
 }
 
 void process_commands(c_event ev) {
+  static byte is_firing = false, is_bombs = false;
   switch (ev.type) {
     case BTN_FLAPS_DOWN:
       DO(EV_KEY, KEY_FLAPS_DOWN, true); // press
@@ -44,9 +45,10 @@ void process_commands(c_event ev) {
       break;
     case BTN_FIRE:
       if (ev.data.is_down) {
-        DO(EV_KEY, KEY_FIRE, true);
+        is_firing = true;
       } else {
         // just released
+        is_firing = false;
         DO(EV_KEY, KEY_FIRE, false);
       }
       break;
@@ -56,9 +58,9 @@ void process_commands(c_event ev) {
       break;
     case BTN_BOMBS:
       if (ev.data.is_down) {
-        DO(EV_KEY, MSC_BOMBS, true);
+        is_bombs = true;
       } else {
-        // just released
+        is_bombs = false;
         DO(EV_KEY, MSC_BOMBS, false);
       }
       break;
@@ -95,6 +97,14 @@ void process_commands(c_event ev) {
             YAW_RAW_MIN, YAW_RAW_MAX,
             g.yaw_dev_min, g.yaw_dev_max));
       break;
+  }
+
+  if (is_firing) {
+    DO(EV_KEY, KEY_FIRE, true);
+  }
+
+  if (is_bombs) {
+    DO(EV_MSC, MSC_BOMBS, true);
   }
 }
 
